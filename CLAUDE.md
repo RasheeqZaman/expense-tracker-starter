@@ -16,12 +16,13 @@ npm run preview   # Preview production build
 
 ## Architecture
 
-This is a single-component React app. All state and logic lives in `src/App.jsx` — there are no child components, routing, or external data layer.
+The app is split into four components:
 
-**Known bugs (intentional, part of the course):**
-- `amount` is stored as a string in state, so `reduce` does string concatenation instead of numeric addition — totals are wrong
-- Transaction #4 ("Freelance Work") is marked `type: "expense"` but categorized as `"salary"` — a data inconsistency
+- **`App`** — holds the `transactions` array in state and passes data/callbacks down. No logic beyond `handleAdd`.
+- **`Summary`** — receives `transactions`, computes `totalIncome`, `totalExpenses`, and `balance` internally.
+- **`TransactionForm`** — owns its own form field state; calls `onAdd(transaction)` prop on submit.
+- **`TransactionList`** — receives `transactions`, owns `filterType` and `filterCategory` state, derives filtered list on render.
 
-**State shape:** Each transaction has `{ id, description, amount, type, category, date }` where `type` is `"income"` or `"expense"` and `amount` is a string (bug).
+There is no routing, context, or external data layer. The `categories` array is duplicated in `TransactionForm` and `TransactionList`.
 
-**Filtering:** `filteredTransactions` is derived inline on each render from `filterType` and `filterCategory` state — no memoization.
+**State shape:** Each transaction has `{ id, description, amount, type, category, date }` where `type` is `"income"` or `"expense"` and `amount` is a number.
